@@ -433,7 +433,7 @@ namespace Proyecto
 
         public List<string> ValidarActions()
         {
-            bool concatenacion = true; int count = 0;
+            bool concatenacion = true; int count = 0; bool parentesis = false; bool parentesis2 = false;
             List<string> listadeNodostemp = new List<string>();
             List<List<string>> listaexpresionestemp = new List<List<string>>();
             List<string> listadeNodos = new List<string>();
@@ -445,7 +445,11 @@ namespace Proyecto
                 {
                     if (dato != "(" && dato != "*" && dato != "?" && dato != "+" && dato != ")" && dato != "|")
                     {
-                        if (concatenacion == true)
+                        if(parentesis == true)
+                        {
+                            listadeNodos.Add(dato);
+                        }
+                        else if (concatenacion == true)
                         {
                             listadeNodostemp.Clear();
                             listadeNodostemp.AddRange(listadeNodos);
@@ -476,15 +480,71 @@ namespace Proyecto
                             concatenacion = true;
                         }
                     }
+                    else if(dato == "(")
+                    {
+                        if (listadeNodos.Last() != "|")
+                        {
+                            listadeNodos.Add(".");
+                        }
+                            listadeNodos.Add("(");
+                        parentesis = true;
+                    }
+                    else if (dato == ")")
+                    {
+                        listadeNodos.Add(")");
+                        parentesis = false;
+                    }
                     else if (dato == "|")
                     {
-
                         listadeNodos.Add(dato);
                         concatenacion = false;
                     }
                     else
                     {
-                        listadeNodos.Add(dato);
+                        if(dato == "*" || dato == "+" || dato == "?")
+                        {
+                            listadeNodostemp.Clear();
+                            string last = listadeNodos.Last();
+                            if (last != ")")
+                            {
+                                listadeNodos.RemoveAt(listadeNodos.Count - 1);
+                                listadeNodostemp.AddRange(listadeNodos);
+                                listadeNodos.Clear();
+                                listadeNodos = listadeNodos.Concat(listadeNodostemp).ToList();
+                                listadeNodos.Add("(");
+                                listadeNodos.Add("(");
+                                listadeNodos.Add(last);
+                                listadeNodos.Add(dato);
+                                listadeNodos.Add(")");
+                            }
+                            else if(concatenacion)
+                            {
+                                int position = listadeNodos.Count-2;
+                                List<string> anteriores = new List<string>();
+                                anteriores = listadeNodos.GetRange(0, position);
+                                listadeNodostemp = listadeNodos.GetRange(position, 1);
+                                listadeNodos.Clear();
+                                listadeNodos = listadeNodos.Concat(anteriores).ToList();
+                                listadeNodos.Add("(");
+                                listadeNodos = listadeNodos.Concat(listadeNodostemp).ToList();
+                                listadeNodos.Add(dato);
+                                listadeNodos.Add(")");
+                                listadeNodos.Add(")");
+                            }
+                            else
+                            {
+                                int position = listadeNodos.LastIndexOf("(");
+                                List<string> anteriores = new List<string>();
+                                anteriores = listadeNodos.GetRange(0, position);
+                                listadeNodostemp = listadeNodos.GetRange(position, listadeNodos.Count - position);
+                                listadeNodos.Clear();
+                                listadeNodos = listadeNodos.Concat(anteriores).ToList();
+                                listadeNodos.Add("(");
+                                listadeNodos = listadeNodos.Concat(listadeNodostemp).ToList();
+                                listadeNodos.Add(dato);
+                                listadeNodos.Add(")");
+                            }
+                        } 
                     }
                 }
                 count++;
