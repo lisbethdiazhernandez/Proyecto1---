@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Proyecto
 {
@@ -32,10 +33,10 @@ namespace Proyecto
 
         public void ProcesarArchivo(string filepath)
         {
-            Read(filepath);
+           Read(filepath);
         }
 
-        public string Read(string filepath)
+        public void Read(string filepath)
         {
             string message = string.Empty;
             List<string> Text_archivo = new List<string>();
@@ -71,19 +72,23 @@ namespace Proyecto
                             errorfound = true;
                             if (error.ElementAt(0) != "fin")
                             {
-                              return error.ElementAt(0);
+                                DialogResult dialog = MessageBox.Show(error.ElementAt(0));
+                                if (dialog == DialogResult.OK)
+                                {Application.Exit(); }
                             }
                             else
                             {
-                                return "exitoso";
+                                Mostrar();
                             }
                         }
                     }
                 }
             }
-            return message;
         }
+        public void Mostrar()
+        {
 
+        }
         public string ValidacionesGeneral(string linea)
         {
             string replacement = Regex.Replace(linea, @"\t|\n|\r| ", "");
@@ -94,7 +99,8 @@ namespace Proyecto
             }
             else
             {
-                error.Add("Error en linea: " + linenum.ToString() + ". Debe de iniciar con indicar los SETS colocando y definiendolos");
+               error.Add("Error en linea: " + linenum.ToString() + ". Debe de iniciar con indicar los SETS colocando y definiendolos");
+               
             }
             return replacement;
         }
@@ -115,13 +121,22 @@ namespace Proyecto
                     {
                         return "TOKENS";
                     }
-
+                    else if (cadena.Substring(0, 3) == "CHR")
+                    {
+                        string palabra = "CHR";
+                        return palabra;
+                    }
                 }
                 if (esperado == "." && cadena.Length >= (length + 1))
                 {
                     if (cadena.Substring(i, length + 1) == "..")
                     {
                         string palabra = "..";
+                        return palabra;
+                    }
+                    if (cadena.Substring(0, 3) == "CHR")
+                    {
+                        string palabra = "CHR";
                         return palabra;
                     }
                     else if (cadena.Substring(i, length) == "+")
@@ -178,7 +193,7 @@ namespace Proyecto
             string nuevacadena = string.Empty;
             nuevacadena += cadena;
             string respuesta = string.Empty;
-            string nombre = string.Empty;
+            string nombre = string.Empty; string content = string.Empty;
             bool terminar = false;
             if (cadena == "=")
             {
@@ -199,6 +214,12 @@ namespace Proyecto
                         }
                         else
                         {
+                            if(sets.Count > 0)
+                            {
+                                SetsDic.Add(sets.Last(), Content);
+                                Content = "";
+                            }
+
                             sets.Add(nombre);
                             nuevacadena = nuevacadena.Length > 0 ? nuevacadena.Substring(nombre.Length + 1, nuevacadena.Length - nombre.Length - 1) : "";
                             siguiente = "'";
@@ -215,7 +236,18 @@ namespace Proyecto
                                 error.Add("Error en linea: " + linenum);
                             }
                         }
-                        if (respuesta != "error")
+                        else if (respuesta == "CHR")
+                        {
+                            nuevacadena = nuevacadena.Length > 0 ? nuevacadena.Substring(respuesta.Length, nuevacadena.Length - respuesta.Length) : "";
+                            respuesta = ValidarCaracteres(specialCharacters.SpecialOnSets, nuevacadena, "(");
+                            nuevacadena = nuevacadena.Length > 0 ? nuevacadena.Substring(1, nuevacadena.Length - 1) : "";
+                            respuesta = ValidarCaracteres(specialCharacters.SpecialOnSets, nuevacadena, ")");
+                            nuevacadena = nuevacadena.Length > 0 ? nuevacadena.Substring(respuesta.Length+1, nuevacadena.Length - (respuesta.Length+1)) : "";
+                           Content += "CHR(" + respuesta + ")";
+                            respuesta = "CHR";
+                            siguiente = ".";
+                        }
+                       else  if (respuesta != "error")
                         {
                             if (abre)
                             {
@@ -233,14 +265,14 @@ namespace Proyecto
                             else
                             {
                                 error.Add("Error en linea: " + linenum + "se encontro la ' la cual nunca fue abierta");
+                                terminar = true;
                             }
-
                         }
                         else
                         {
                             terminar = true;
                         }
-                        nuevacadena = nuevacadena.Length > 0 && respuesta != "error" ? nuevacadena.Substring(respuesta.Length + 2, nuevacadena.Length - respuesta.Length - 2) : "";
+                        nuevacadena = nuevacadena.Length > 0 && respuesta != "error" && respuesta!= "CHR"? nuevacadena.Substring(respuesta.Length + 2, nuevacadena.Length - respuesta.Length - 2) : (nuevacadena = respuesta == "CHR" ?  nuevacadena: "");
                         if (nuevacadena.Length == 0)
                         { terminar = true; }
                         siguiente = ".";
@@ -249,7 +281,8 @@ namespace Proyecto
                         respuesta = ValidarCaracteres(specialCharacters.SpecialOnSets, nuevacadena, ".");
                         if (respuesta == "TOKENS")
                         {
-                            siguiente = "=";
+                            siguiente = "="; SetsDic.Add(sets.Last(), Content);
+                            Content = "";
                             terminar = true; tok = true;
                             nuevacadena = nuevacadena.Length > 0 ? nuevacadena.Substring(nombre.Length, nuevacadena.Length - nombre.Length) : "";
                         }
@@ -269,12 +302,10 @@ namespace Proyecto
                                 nuevacadena = nuevacadena.Length > 0 ? nuevacadena.Substring(respuesta.Length, nuevacadena.Length - respuesta.Length) : "";
                                 siguiente = "'";
                             }
-
                         }
                         if (nuevacadena.Length == 0)
                         { terminar = true; }
                         break;
-
                 }
             }
             return sets;
@@ -314,12 +345,27 @@ namespace Proyecto
                 {
                     if (cadena.Substring(i, length) == esperado)
                     {
+                        if(cadena.Length >= 2)
+                        {
+                            
+                                if (cadena.Length <= 2 && cadena.Substring(0, 2) == "''")
+                                {
+                                    tokens.Add(cadena.Substring(0, 1));
+                                    return cadena.Substring(0, 1);
+                                }
+                                else if (cadena.Substring(0, 2) == "''" && cadena.Substring(0, 3) != "'''")
+                                {
+                                    tokens.Add(cadena.Substring(0, 1));
+                                    return cadena.Substring(0, 1);
+                                }
+                        }
                         if (cadena.Substring(0, 1) == "'")
                         {
                             return "'";
                         }
                         else
                         {
+                            
                             tokens.Add(cadena.Substring(0, i));
                             return cadena.Substring(0, i);
                         }
@@ -365,7 +411,7 @@ namespace Proyecto
                             }
                             else
                             {
-                                error.Add("El numero de token " + numero + " ya existe, por lo cual no puede ser creado");
+                                error.Add("El numero de token " + numero + " ya existe, por lo cual no puede ser creado"); terminar = true;
                             }
                             tokens.Clear();
                         }
@@ -388,7 +434,7 @@ namespace Proyecto
                             newstring = newstring.Length > 0 ? newstring.Substring(respuesta.Length + 1, newstring.Length - (respuesta.Length + 1)) : "";
                             siguiente = "'";
                         }
-                        if (newstring.Substring(0, 1) == "(")
+                        else if (newstring.Substring(0, 1) == "(")
                         {
                             newstring = newstring.Length > 0 ? newstring.Substring(1, newstring.Length - 1) : "";
                             respuesta = ValidarCaracteresTokens(specialCharacters.SpecialOnTokens, newstring, ")");
@@ -401,9 +447,15 @@ namespace Proyecto
                         }
                         else if (respuesta.ToUpper() == "TOKEN")
                         {
-                            TokenDic.Add(numero, tokens.GetRange(0, tokens.Count));
-                            tokens.Clear(); numero = "";
-                            siguiente = "=";
+                            if (!TokenDic.Keys.Contains(numero))
+                            {
+                                TokenDic.Add(numero, tokens.GetRange(0, tokens.Count)); tokens.Clear(); numero = "";
+                                siguiente = "=";
+                            }
+                            else
+                            {
+                                error.Add("El numero de token " + numero + " ya existe, por lo cual no puede ser creado"); terminar = true;
+                            }
                         }
                         else if (respuesta.ToUpper() == "ACTIONS")
                         {
@@ -413,7 +465,7 @@ namespace Proyecto
                             }
                             else
                             {
-                                error.Add("El numero de token " + numero + " ya existe, por lo cual no puede ser creado");
+                               error.Add("El numero de token " + numero + " ya existe, por lo cual no puede ser creado"); terminar = true;
                             }
                             tokens.Clear(); numero = "";
                             terminar = true;
