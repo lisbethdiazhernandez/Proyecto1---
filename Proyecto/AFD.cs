@@ -27,6 +27,8 @@ namespace Proyecto
         public void Mostrar()
         {
             dataGridFirst.DataSource = validations.MostrarFirst();
+            dataGridFollow.DataSource = validations.MostrarFollows();
+            dataGridSets.DataSource = validations.MostrarSets();
         }
     }
 }

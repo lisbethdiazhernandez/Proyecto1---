@@ -77,19 +77,12 @@ namespace Proyecto
                                 if (dialog == DialogResult.OK)
                                 {Application.Exit(); }
                             }
-                            else
-                            {
-                                Mostrar();
-                            }
                         }
                     }
                 }
             }
         }
-        public void Mostrar()
-        {
-            
-        }
+        
         public DataTable MostrarFirst()
         {
             DataTable dtData = new DataTable("First&Last");
@@ -105,6 +98,36 @@ namespace Proyecto
                 newrow["First"] = String.Join(",", item.Value.First);
                 newrow["Last"] = String.Join(",", item.Value.Last);
                 newrow["nullable"] = item.Value.nullable == true? "yes" : "no";
+                dtData.Rows.Add(newrow);
+            }
+            return dtData;
+        }
+        public DataTable MostrarFollows()
+        {
+            DataTable dtData = new DataTable("Follows");
+            dtData.Columns.Add("Caracter", typeof(string));
+            dtData.Columns.Add("Follow", typeof(string));
+
+            foreach (var item in Follows)
+            {
+                DataRow newrow = dtData.NewRow();
+                newrow["Caracter"] = item.Key.ToString();
+                newrow["Follow"] = String.Join(",", item.Value);
+                dtData.Rows.Add(newrow);
+            }
+            return dtData;
+        }
+        public DataTable MostrarSets()
+        {
+            DataTable dtData = new DataTable("Sets");
+            dtData.Columns.Add("Set", typeof(string));
+            dtData.Columns.Add("Contenido", typeof(string));
+
+            foreach (var item in SetsDic)
+            {
+                DataRow newrow = dtData.NewRow();
+                newrow["Set"] = item.Key.ToString();
+                newrow["Contenido"] = item.Value;
                 dtData.Rows.Add(newrow);
             }
             return dtData;
@@ -669,6 +692,13 @@ namespace Proyecto
                     listadeNodos.AddRange(expresion);
                 }
             }
+
+            listadeNodostemp.Clear();
+            listadeNodostemp.AddRange(listadeNodos);
+            listadeNodos.Clear();
+            listadeNodos.Add("(");
+            listadeNodos = listadeNodos.Concat(listadeNodostemp).ToList();
+            listadeNodos.Add("."); listadeNodos.Add("#"); listadeNodos.Add(")");
             graph = arbol.CreateTree(listadeNodos, 0, 0);
             //Asigno first
             vertice graph1 = arbol.AssignFirst(graph, graph.head);
