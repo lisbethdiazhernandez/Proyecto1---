@@ -1,6 +1,6 @@
 ﻿namespace Proyecto
 {
-    partial class AFD
+    partial class Form1
     {
         /// <summary>
         /// Required designer variable.
@@ -28,62 +28,34 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.label1 = new System.Windows.Forms.Label();
-            this.dataGridView2 = new System.Windows.Forms.DataGridView();
-            this.dataGridView3 = new System.Windows.Forms.DataGridView();
-            this.label2 = new System.Windows.Forms.Label();
+            this.dataGridFirst = new System.Windows.Forms.DataGridView();
+            this.dataGridFollow = new System.Windows.Forms.DataGridView();
             this.label3 = new System.Windows.Forms.Label();
-            this.dataGridView4 = new System.Windows.Forms.DataGridView();
+            this.dataGridAFD = new System.Windows.Forms.DataGridView();
             this.label4 = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView4)).BeginInit();
+            this.dataGridSets = new System.Windows.Forms.DataGridView();
+            this.label5 = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridFirst)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridFollow)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridAFD)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridSets)).BeginInit();
             this.SuspendLayout();
             // 
-            // dataGridView1
+            // dataGridFirst
             // 
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(21, 29);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(126, 114);
-            this.dataGridView1.TabIndex = 0;
+            this.dataGridFirst.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridFirst.Location = new System.Drawing.Point(21, 29);
+            this.dataGridFirst.Name = "dataGridFirst";
+            this.dataGridFirst.Size = new System.Drawing.Size(278, 114);
+            this.dataGridFirst.TabIndex = 0;
             // 
-            // label1
+            // dataGridFollow
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(32, 13);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(26, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "First";
-            this.label1.Click += new System.EventHandler(this.label1_Click);
-            // 
-            // dataGridView2
-            // 
-            this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView2.Location = new System.Drawing.Point(168, 29);
-            this.dataGridView2.Name = "dataGridView2";
-            this.dataGridView2.Size = new System.Drawing.Size(130, 114);
-            this.dataGridView2.TabIndex = 2;
-            // 
-            // dataGridView3
-            // 
-            this.dataGridView3.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView3.Location = new System.Drawing.Point(343, 29);
-            this.dataGridView3.Name = "dataGridView3";
-            this.dataGridView3.Size = new System.Drawing.Size(229, 114);
-            this.dataGridView3.TabIndex = 3;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(181, 10);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(27, 13);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "Last";
+            this.dataGridFollow.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridFollow.Location = new System.Drawing.Point(343, 29);
+            this.dataGridFollow.Name = "dataGridFollow";
+            this.dataGridFollow.Size = new System.Drawing.Size(229, 114);
+            this.dataGridFollow.TabIndex = 3;
             // 
             // label3
             // 
@@ -94,13 +66,13 @@
             this.label3.TabIndex = 5;
             this.label3.Text = "Follow";
             // 
-            // dataGridView4
+            // dataGridAFD
             // 
-            this.dataGridView4.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView4.Location = new System.Drawing.Point(21, 175);
-            this.dataGridView4.Name = "dataGridView4";
-            this.dataGridView4.Size = new System.Drawing.Size(551, 150);
-            this.dataGridView4.TabIndex = 6;
+            this.dataGridAFD.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridAFD.Location = new System.Drawing.Point(21, 175);
+            this.dataGridAFD.Name = "dataGridAFD";
+            this.dataGridAFD.Size = new System.Drawing.Size(551, 150);
+            this.dataGridAFD.TabIndex = 6;
             // 
             // label4
             // 
@@ -111,39 +83,53 @@
             this.label4.TabIndex = 7;
             this.label4.Text = "Automata Finito Determinista";
             // 
-            // AFD
+            // dataGridSets
+            // 
+            this.dataGridSets.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridSets.Location = new System.Drawing.Point(588, 29);
+            this.dataGridSets.Name = "dataGridSets";
+            this.dataGridSets.Size = new System.Drawing.Size(229, 114);
+            this.dataGridSets.TabIndex = 8;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(595, 10);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(28, 13);
+            this.label5.TabIndex = 9;
+            this.label5.Text = "Sets";
+            // 
+            // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(688, 337);
+            this.ClientSize = new System.Drawing.Size(885, 337);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.dataGridSets);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.dataGridView4);
+            this.Controls.Add(this.dataGridAFD);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.dataGridView3);
-            this.Controls.Add(this.dataGridView2);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.dataGridView1);
-            this.Name = "AFD";
+            this.Controls.Add(this.dataGridFollow);
+            this.Controls.Add(this.dataGridFirst);
+            this.Name = "Form1";
             this.Text = "AFD";
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridFirst)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridFollow)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridAFD)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridSets)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.DataGridView dataGridView2;
-        private System.Windows.Forms.DataGridView dataGridView3;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.DataGridView dataGridFollow;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.DataGridView dataGridView4;
+        private System.Windows.Forms.DataGridView dataGridAFD;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.DataGridView dataGridSets;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.DataGridView dataGridFirst;
     }
 }

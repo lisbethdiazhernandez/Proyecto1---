@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -87,7 +88,26 @@ namespace Proyecto
         }
         public void Mostrar()
         {
+            
+        }
+        public DataTable MostrarFirst()
+        {
+            DataTable dtData = new DataTable("First&Last");
+            dtData.Columns.Add("Caracter", typeof(string));
+            dtData.Columns.Add("First", typeof(string));
+            dtData.Columns.Add("Last", typeof(string));
+            dtData.Columns.Add("nullable", typeof(string));
 
+            foreach (var item in graph.vertices)
+            {
+                DataRow newrow = dtData.NewRow();
+                newrow["Caracter"] = item.Value.value;
+                newrow["First"] = String.Join(",", item.Value.First);
+                newrow["Last"] = String.Join(",", item.Value.Last);
+                newrow["nullable"] = item.Value.nullable == true? "yes" : "no";
+                dtData.Rows.Add(newrow);
+            }
+            return dtData;
         }
         public string ValidacionesGeneral(string linea)
         {
@@ -318,6 +338,7 @@ namespace Proyecto
 
             for (int i = 0; i <= cadenalength; i++)
             {
+                
                 if (cadena.Substring(0, i).ToUpper() == "TOKEN")
                 {
                     return "TOKEN";
@@ -335,6 +356,12 @@ namespace Proyecto
                 {
                     tokens.Add(cadena.Substring(0, 1));
                     return cadena.Substring(0, 1);
+                }
+                else if (cadena.Length < i + length)
+                {
+                    error.Add("No se encontro el set " + cadena);
+                   
+                    return "error";
                 }
                 else if (cadena.Substring(i, length) == "=" && esperado != "'")
                 {
@@ -455,6 +482,7 @@ namespace Proyecto
                             else
                             {
                                 error.Add("El numero de token " + numero + " ya existe, por lo cual no puede ser creado"); terminar = true;
+                          
                             }
                         }
                         else if (respuesta.ToUpper() == "ACTIONS")
@@ -470,6 +498,10 @@ namespace Proyecto
                             tokens.Clear(); numero = "";
                             terminar = true;
                             ValidarActions();
+                        }
+                        else if(respuesta =="error")
+                        {
+                            terminar = true;
                         }
                         else
                         {

@@ -10,20 +10,23 @@ using System.Windows.Forms;
 
 namespace Proyecto
 {
-    public partial class AFD : Form
+    public partial class Form1 : Form
     {
-        public string FileName = string.Empty;
-        public AFD(string filename)
+        public DataGridView DataGridView1 { get { return this.dataGridFirst; } }
+        public string FileName = string.Empty; Validations validations = new Validations();
+        public Form1(string filename)
         {
             FileName = filename;
             InitializeComponent();
-            Validations validations = new Validations();
             validations.Read(FileName);
+            if(validations.error.Last() == "fin")
+            {
+                Mostrar();
+            }
         }
-
-        private void label1_Click(object sender, EventArgs e)
+        public void Mostrar()
         {
-
+            dataGridFirst.DataSource = validations.MostrarFirst();
         }
     }
 }
