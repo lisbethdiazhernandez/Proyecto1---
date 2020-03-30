@@ -684,7 +684,17 @@ namespace Proyecto
                     listadeNodos.Add("(");
                     listadeNodos = listadeNodos.Concat(listadeNodostemp).ToList();
                     listadeNodos.Add("|");
-                    listadeNodos.AddRange(expresion);
+                    if (expresion.First() !="(")
+                    {
+                        listadeNodos.Add("(");
+                        listadeNodos.AddRange(expresion);
+                        listadeNodos.Add(")");
+                    }
+                    else
+                    {
+                        listadeNodos.AddRange(expresion);
+                    }
+                    
                     listadeNodos.Add(")");
                 }
                 else
@@ -699,6 +709,8 @@ namespace Proyecto
             listadeNodos.Add("(");
             listadeNodos = listadeNodos.Concat(listadeNodostemp).ToList();
             listadeNodos.Add("."); listadeNodos.Add("#"); listadeNodos.Add(")");
+            string expresiioon = String.Join(" ", listadeNodos);
+
             graph = arbol.CreateTree(listadeNodos, 0, 0);
             //Asigno first
             vertice graph1 = arbol.AssignFirst(graph, graph.head);
@@ -718,14 +730,14 @@ namespace Proyecto
 
 
             P.Add(1, graph.vertices.ToList().FirstOrDefault(x => x.Key == 1).Value.First);
-            try
-            {
-                P = arbol.CreateTransitions(graph, transitions, P, 1);
-            }
-            catch
-            {
-                string p = string.Empty;
-            }
+            //try
+            //{
+            //    P = arbol.CreateTransitions(graph, transitions, P, 1);
+            //}
+            //catch
+            //{
+            //    string p = string.Empty;
+            //}
             error.Add("fin");
             return actions;
         }

@@ -10,7 +10,7 @@ namespace Proyecto
     {
 
         public int NoTerminales = 1;
-        public Dictionary<int, List<int>> Follows = new Dictionary<int, List<int>>();
+        public static Dictionary<int, List<int>> Follows = new Dictionary<int, List<int>>();
 
         public Graph CreateTree(List<string> expresion, int nVertices, int nEdges)
         {
@@ -322,9 +322,10 @@ namespace Proyecto
             return vert;
         }
 
+    
         public Dictionary<int, List<int>> AssignFollow(Graph graph)
         {
-            List<int> templist = new List<int>();
+            
 
             foreach (var item in graph.vertices)
             {
@@ -336,7 +337,11 @@ namespace Proyecto
                     {
                         if (Follows.ContainsKey(follow))
                         {
-                            Follows[follow].AddRange(vertice.First.FindAll(x => Follows[follow].Contains(x) == false));
+                            List<int> templist = new List<int>();
+                            templist = vertice.First.FindAll(x => Follows[follow].Contains(x) == false);
+                            templist.AddRange(Follows[follow]);
+                            Follows.Remove(follow);
+                            Follows.Add(follow, templist);
                         }
                         else
                         {
@@ -356,11 +361,16 @@ namespace Proyecto
                     {
                         if (Follows.ContainsKey(follow))
                         {
-                            Follows[follow].AddRange(vertice2.First.FindAll(x => Follows[follow].Contains(x) == false));
+                            List<int> templist = new List<int>();
+                            templist = vertice2.First.FindAll(x => Follows[follow].Contains(x) == false);
+                            templist.AddRange(Follows[follow]);
+                            Follows.Remove(follow);
+                            Follows.Add(follow, templist);
                         }
                         else
                         {
                             Follows.Add(follow, vertice2.First);
+                            
                         }
                     }
                 }
