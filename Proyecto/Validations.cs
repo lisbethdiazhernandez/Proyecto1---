@@ -31,6 +31,7 @@ namespace Proyecto
         string validarcaracteres = string.Empty;
         static Dictionary<string, List<List<string>>> transitions = new Dictionary<string, List<List<string>>>();
         static Dictionary<int, List<int>> P = new Dictionary<int, List<int>>();
+        static Dictionary<int, List<int>> Follow = new Dictionary<int, List<int>>();
 
         public void ProcesarArchivo(string filepath)
         {
@@ -733,7 +734,11 @@ namespace Proyecto
             vertice graph2 = arbol.AssignLast(graph, graph.head);
             int nt = arbol.NoTerminales;
             Follows = arbol.AssignFollow(graph);
-
+            if (Follows.Count < nt)
+            {
+                List<int> tem = new List<int>();
+                Follows.Add(Follows.Count +1, tem);
+            }
             foreach (var vertu in graph.vertices)
             {
                 List<List<string>> TempData = new List<List<string>>();
@@ -749,8 +754,9 @@ namespace Proyecto
             {
                 P = arbol.CreateTransitions(graph, transitions, P, 1);
             }
-            catch
+            catch(Exception ex)
             {
+                MessageBox.Show("ERROR: " + ex.Message);
                 string p = string.Empty;
             }
             error.Add("fin");

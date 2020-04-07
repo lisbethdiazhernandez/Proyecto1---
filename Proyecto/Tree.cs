@@ -325,8 +325,6 @@ namespace Proyecto
     
         public Dictionary<int, List<int>> AssignFollow(Graph graph)
         {
-            
-
             foreach (var item in graph.vertices)
             {
                 if (item.Value.value == "*" || item.Value.value == "+" || item.Value.value == "?")
@@ -370,7 +368,6 @@ namespace Proyecto
                         else
                         {
                             Follows.Add(follow, vertice2.First);
-                            
                         }
                     }
                 }
@@ -401,38 +398,109 @@ namespace Proyecto
                                 if (Follows.Count > item)
                                 {
                                     noter.Value.Add(Follows[item].ConvertAll<string>(x => x.ToString()));
-                                    faltantes.Add(Follows[item]);
+                                    if (!faltantes.Contains(Follows[item]))
+                                    { faltantes.Add(Follows[item]); }
                                 }
                             }
                             else
                             {
                                 noter.Value[inicio - 1].AddRange(Follows[item].ConvertAll<string>(x => x.ToString()));
-                                faltantes.Add(Follows[item]);
+                                if (!faltantes.Contains(Follows[item]))
+                                { faltantes.Add(Follows[item]); }
                             }
                         }
                         else
                         {
                             List<string> temp = new List<string>();
-                            temp.Add("");
                             noter.Value.Add(temp);
                         }
                     }
                 }
                 foreach (var conjunto in faltantes)
                 {
-                    if (!p.Values.Contains(conjunto))
+                    bool exist = false;
+                    //if (!p.Values.Contains(conjunto))
+                    foreach(var i in p.Values)
+                    {
+                        exist = UnorderedEqual(i, conjunto);
+                        if(exist)
+                        {
+                            exit = true;
+                            break;
+                        }
+                    }
+                    if(!exist)
                     {
                         exit = false;
                         p.Add(p.Count + 1, conjunto);
-                        p = CreateTransitions(graph, transiciones, p, p.Count);
-                    }
-                    else
-                    {
-                        exit = true;
+                        CreateTransitions(graph, transiciones, p, p.Count);
                     }
                 }
             }
             return p;
         }
+        static bool UnorderedEqual<T>(ICollection<T> a, ICollection<T> b)
+        {
+            // 1
+            // Require that the counts are equal
+            if (a.Count != b.Count)
+            {
+                return false;
+            }
+            // 2
+            // Initialize new Dictionary of the type
+            Dictionary<T, int> d = new Dictionary<T, int>();
+            // 3
+            // Add each key's frequency from collection A to the Dictionary
+            foreach (T item in a)
+            {
+                int c;
+                if (d.TryGetValue(item, out c))
+                {
+                    d[item] = c + 1;
+                }
+                else
+                {
+                    d.Add(item, 1);
+                }
+            }
+            // 4
+            // Add each key's frequency from collection B to the Dictionary
+            // Return early if we detect a mismatch
+            foreach (T item in b)
+            {
+                int c;
+                if (d.TryGetValue(item, out c))
+                {
+                    if (c == 0)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        d[item] = c - 1;
+                    }
+                }
+                else
+                {
+                    // Not in dictionary
+                    return false;
+                }
+            }
+            // 5
+            // Verify that all frequencies are zero
+            foreach (int v in d.Values)
+            {
+                if (v != 0)
+                {
+                    return false;
+                }
+            }
+            // 6
+            // We know the collections are equal
+            return true;
+        }
     }
+
 }
+
