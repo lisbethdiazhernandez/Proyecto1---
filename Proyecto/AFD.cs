@@ -29,6 +29,7 @@ namespace Proyecto
             dataGridFirst.DataSource = validations.MostrarFirst();
             dataGridFollow.DataSource = validations.MostrarFollows();
             dataGridSets.DataSource = validations.MostrarSets();
+            dataGridAFD.DataSource = validations.MostrarTransiciones();
         }
     }
 }

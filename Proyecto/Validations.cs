@@ -102,6 +102,21 @@ namespace Proyecto
             }
             return dtData;
         }
+        public DataTable MostrarTransiciones()
+        {
+            DataTable dtData = new DataTable("Transitions");
+            dtData.Columns.Add("Numero", typeof(string));
+            dtData.Columns.Add("Estados", typeof(string));
+
+            foreach (var item in P)
+            {
+                DataRow newrow = dtData.NewRow();
+                newrow["Numero"] = item.Key;
+                newrow["Estados"] = String.Join(",", item.Value);
+                dtData.Rows.Add(newrow);
+            }
+            return dtData;
+        }
         public DataTable MostrarFollows()
         {
             DataTable dtData = new DataTable("Follows");
@@ -730,14 +745,14 @@ namespace Proyecto
 
 
             P.Add(1, graph.vertices.ToList().FirstOrDefault(x => x.Key == 1).Value.First);
-            //try
-            //{
-            //    P = arbol.CreateTransitions(graph, transitions, P, 1);
-            //}
-            //catch
-            //{
-            //    string p = string.Empty;
-            //}
+            try
+            {
+                P = arbol.CreateTransitions(graph, transitions, P, 1);
+            }
+            catch
+            {
+                string p = string.Empty;
+            }
             error.Add("fin");
             return actions;
         }
