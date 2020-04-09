@@ -61,6 +61,7 @@
     <Compile Include="Graph.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Prueba.cs" />
     <Compile Include="SpecialCharacters.cs" />
     <Compile Include="Tree.cs" />
     <Compile Include="Validations.cs" />

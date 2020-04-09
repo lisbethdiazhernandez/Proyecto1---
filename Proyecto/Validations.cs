@@ -29,8 +29,8 @@ namespace Proyecto
         static Tree arbol = new Tree();
         static Dictionary<int, List<int>> Follows = new Dictionary<int, List<int>>();
         string validarcaracteres = string.Empty;
-        static Dictionary<string, List<List<string>>> transitions = new Dictionary<string, List<List<string>>>();
-        static Dictionary<int, List<int>> P = new Dictionary<int, List<int>>();
+        public  Dictionary<string, List<List<string>>> transitions = new Dictionary<string, List<List<string>>>();
+        public Dictionary<int, List<int>> P = new Dictionary<int, List<int>>();
         static Dictionary<int, List<int>> Follow = new Dictionary<int, List<int>>();
 
         public void ProcesarArchivo(string filepath)
@@ -762,5 +762,6 @@ namespace Proyecto
             error.Add("fin");
             return actions;
         }
+   
     }
 }
