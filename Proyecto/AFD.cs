@@ -60,28 +60,80 @@ namespace Proyecto
             {
                 var key = setsdic.FirstOrDefault(x => x.Key == item.Key).Value;
                 string validacion = string.Empty;
-                string intervalonicial= string.Empty; string intervalofinal = string.Empty;
-                for (int i =0; i< key.Length; i++)
+                if (key != "" && key != null)
                 {
-                    string temporal = key.Substring(0,i);
-                    string inicial;
-                    if(temporal.Substring(i,2) == "..")
+                    if (key.Contains("'"))
                     {
-                        intervalonicial = temporal.Substring(0, i);
-                        temporal = temporal.Substring(i+2, temporal.Length);
+                        key = key.Replace("'", "");
                     }
-                    else if (temporal.Substring(i, 1) == "+")
+                    
+                    string intervalonicial = string.Empty; string intervalofinal = string.Empty;
+                    string temporal = key;
+
+                    for (int i = 0; i < key.Length; i++)
                     {
-                        intervalofinal = temporal.Substring(0, i);
-                        temporal = temporal.Substring(i + 1, temporal.Length);
-                        validacion += "if ( cadena[i] >= " + System.Convert.ToInt32(intervalonicial) + " &&  cadena[i] <= " + System.Convert.ToInt32(intervalofinal);
-                    }
-                    else if (intervalonicial== "" && intervalofinal == "" && !temporal.Contains(".."))
-                    {
-                        validacion += " || cadena[i] == " + temporal; 
+
+                        string inicial;
+                        if (temporal.Length >= i + 2)
+                        {
+                            if (temporal.Substring(i, 2) == "..")
+                            {
+                                intervalonicial = temporal.Substring(0, 1);
+                                temporal = temporal.Substring(3, temporal.Length - (i + 2));
+                            }
+                            else if (temporal.Substring(i, 1) == "+")
+                            {
+                                intervalofinal = temporal.Substring(0, 1);
+                                temporal = temporal.Substring(2, temporal.Length-2);
+                                validacion += "if(( cadena[i] >= " + (System.Convert.ToInt32(intervalonicial.ToCharArray()[0])).ToString() + " &&  cadena[i] <= " + System.Convert.ToInt32(intervalofinal) +")";
+                                intervalofinal = ""; intervalonicial = "";i = 0;
+                            }
+                            else if (intervalonicial == "" && intervalofinal == "" && !temporal.Contains(".."))
+                            {
+                                validacion += " ||( cadena[i] == " + temporal + ")";
+                            }
+                            else if (intervalonicial != "" && intervalofinal == "")
+                            {
+                                intervalofinal = temporal.Substring(0, 1);
+                                temporal = temporal.Substring(2, temporal.Length-2);
+                                validacion += "if((cadena[i] >= " + (System.Convert.ToInt32(intervalonicial.ToCharArray()[0])).ToString() + " &&  cadena[i] <= " + System.Convert.ToInt32(intervalofinal.ToCharArray()[0]).ToString() + ")";
+                                intervalofinal = ""; intervalonicial = ""; i = 0;
+                            }
+                        }
+                        else if (!temporal.Contains("..") && !temporal.Contains("+") && intervalonicial != "")
+                        {
+                            intervalofinal = temporal;
+                            validacion += "if((cadena[i] >= " + (System.Convert.ToInt32(intervalonicial.ToCharArray()[0])).ToString() + " &&  cadena[i] <= " + System.Convert.ToInt32(intervalofinal.ToCharArray()[0]).ToString() + ")";
+                            i = key.Length;
+                            intervalofinal = ""; intervalonicial = "";
+                        }
+                        else
+                        {
+                            if (validacion != "" && intervalonicial == "")
+                            {
+                                validacion += " && (cadena[i] == " + (System.Convert.ToInt32(temporal.ToCharArray()[0])).ToString() + ")";
+                            }
+                            else if (temporal.Contains("+") && intervalonicial != "")
+                            {
+                                intervalofinal = temporal.Substring(0, 1);
+                                temporal = temporal.Length > 2? temporal.Substring(2, temporal.Length-2): "";
+                                validacion += validacion.Contains("if")? (" || ( cadena[i] >= " + (System.Convert.ToInt32(intervalonicial.ToCharArray()[0])).ToString() + " &&  cadena[i] <= " + System.Convert.ToInt32(intervalofinal.ToCharArray()[0]).ToString()) + ")" : (" if((cadena[i] >= " + (System.Convert.ToInt32(intervalonicial.ToCharArray()[0])).ToString() + " && cadena[i] <= " + System.Convert.ToInt32(intervalofinal.ToCharArray()[0]).ToString() + ")");
+                                intervalofinal = ""; intervalonicial = ""; i = 0;
+                            }
+                            else
+                            {
+                                validacion += validacion.Contains("if") ? (" || cadena[i] == " + (Convert.ToInt32(temporal.ToCharArray()[0])).ToString()) + ")" : (" if((cadena[i] == " + (Convert.ToInt32(temporal.ToCharArray()[0])).ToString() + ")");
+                            }
+                            i = key.Length;
+                        }
                     }
 
                 }
+                else
+                {
+                    validacion = " if (cadena[i] == " + (Convert.ToInt32(item.Key.ToCharArray()[0])).ToString() + ")";
+                }
+                validacion += validacion.Contains("if((") ? ")" : "";
                 validationsets.Add(item.Key, validacion);
             }
 
