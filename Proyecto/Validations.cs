@@ -742,7 +742,7 @@ namespace Proyecto
             foreach (var vertu in graph.vertices)
             {
                 List<List<string>> TempData = new List<List<string>>();
-                if (vertu.Value.value != "*" && vertu.Value.value != "+" && vertu.Value.value != "?" && vertu.Value.value != "|" && vertu.Value.value != "." && transitions.Keys.Contains(vertu.Value.value) == false)
+                if (vertu.Value.value != "*" && vertu.Value.value != "#" && vertu.Value.value != "+" && vertu.Value.value != "?" && vertu.Value.value != "|" && vertu.Value.value != "." && transitions.Keys.Contains(vertu.Value.value) == false)
                 {
                     transitions.Add(vertu.Value.value, TempData);
                 }
@@ -756,7 +756,6 @@ namespace Proyecto
             }
             catch(Exception ex)
             {
-                MessageBox.Show("ERROR: " + ex.Message);
                 string p = string.Empty;
             }
             error.Add("fin");

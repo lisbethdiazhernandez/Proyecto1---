@@ -20,7 +20,8 @@ namespace Proyecto
         Dictionary<string, string> setsdic = new Dictionary<string, string>();
         Dictionary<string, string> validationsets = new Dictionary<string, string>();
         Dictionary<string, List<string>> tokendic = new Dictionary<string, List<string>>();
-        Dictionary<int, List<int>> P = new Dictionary<int, List<int>>();
+        Dictionary<int, List<string>> P = new Dictionary<int, List<string>>();
+        
         public Form1(string filename)
         {
             FileName = filename;
@@ -34,7 +35,10 @@ namespace Proyecto
             transiciones = validations.transitions;
             setsdic = validations.SetsDic;
             tokendic = validations.TokenDic;
-            P = validations.P;
+            foreach(var item in validations.P)
+            {
+                P.Add(item.Key, item.Value.Select(x => x.ToString()).ToList());
+            }
         }
         public void Mostrar()
         {
@@ -137,39 +141,54 @@ namespace Proyecto
                 validationsets.Add(item.Key, validacion);
             }
 
-             string path = System.IO.Directory.GetCurrentDirectory();
-
+            //string path = System.IO.Directory.GetCurrentDirectory();
+            string path = "\\Desktop\\CLASE.cs";
             if (!File.Exists(path))
             {
                 using (StreamWriter sw = File.CreateText(path))
                 {
-                    sw.Write("using System; \\r\\n  using System.Collections.Generic; \\r\\n using System.Linq; \\r\\n  using System.Text; \\r\\n  using System.Threading.Tasks; \\r\\n  namespace Proyecto \\r\\n  { \\r\\n  class Prueba \\r\\n {");
+                    string text = "using System; @  using System.Collections.Generic; @ using System.Linq; @ using System.Text; @ using System.Threading.Tasks; @ namespace Proyecto @ { @  class Prueba @ {";
+                    text += "public void Verificar(string texto) @ { ";
+                    text += " for (int i = 0; i < texto.Length; i++) @ { ";
+                    text = text.Replace("@", Environment.NewLine);
+                    sw.Write(text);
                 }
                 int contadorestados = 1;
                 using (StreamWriter swa = File.AppendText(path))
                 {
-                    swa.Write("int Estado =0;");
-                    swa.Write("switch (Estado) {;");
+                    swa.WriteLine("int Estado = 0; bool Salir = false; bool Error = false; ");
+                    swa.WriteLine("switch (Estado) {");
                     string thecase = string.Empty;
-                   foreach(var item in transiciones)
+                    for (int i = 0; i < transiciones.Count; i++)
                     {
-                        if (!thecase.Contains("if"))
+                        thecase += "case " + contadorestados + " : @";
+                        foreach (var item in transiciones)
                         {
-                            thecase += "case " + contadorestados + " : \\r\\n";
-                            var ifs = validationsets.FirstOrDefault(x => x.Key == item.Key).Value;
-                            thecase += "{ " + ifs;
-                            int posicion = P.FirstOrDefault(x => x.Value.Select(y =>y.ToString()).ToList() == item.Value[contadorestados - 1]).Key;
-                            thecase += "Estado = " + posicion + "}";
+                            if (!thecase.Contains("if"))
+                            {
+                                var ifs = validationsets.FirstOrDefault(x => x.Key == item.Key).Value;
+                                thecase += ifs + "{ ";
+                                List<string> temp = item.Value[contadorestados - 1];
+                                int posicion = P.LastOrDefault(x => x.Value.All(temp.Contains) && x.Value.Count == temp.Count).Key;
+                                thecase += "Estado = " + posicion + "; }";
+                            }
+                            else
+                            {
+                                var ifs = validationsets.FirstOrDefault(x => x.Key == item.Key).Value;
+                                thecase += "else " + ifs + "{";
+                                List<string> temp = item.Value[contadorestados - 1];
+                                int posicion = P.LastOrDefault(x => x.Value.All(temp.Contains) && x.Value.Count == temp.Count).Key;
+                                thecase += "Estado = " + posicion + ";  }";
+                            }
                         }
-                        else
-                        {
-                            thecase += "case " + contadorestados + " : \\r\\n";
-                            var ifs = validationsets.FirstOrDefault(x => x.Key == item.Key).Value;
-                            thecase += "{ else " + ifs;
-                            int posicion = P.FirstOrDefault(x => x.Value.ConvertAll<string>(y => y.ToString()) == item.Value[contadorestados - 1]).Key;
-                            thecase += "Estado = " + posicion + "}";
-                        }
+                        thecase += "else { @ Error = true; @ Salir = true; @ } @ break;";
+                        thecase = thecase.Replace("@", Environment.NewLine);
+                        swa.Write(thecase);
+                        thecase = ""; contadorestados++;
                     }
+                    thecase = "} @ } @ } @ } @ }";
+                    thecase = thecase.Replace("@", Environment.NewLine);
+                    swa.Write(thecase);
                 }
             }
            
