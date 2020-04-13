@@ -159,7 +159,7 @@ namespace Proyecto
                     swa.WriteLine("int Estado = 0; bool Salir = false; bool Error = false; ");
                     swa.WriteLine("switch (Estado) {");
                     string thecase = string.Empty;
-                    for (int i = 0; i < transiciones.Count; i++)
+                    for (int i = 0; i <= transiciones.Count; i++)
                     {
                         swa.Write("case " + contadorestados + " : ");
                         foreach (var item in transiciones)
@@ -181,7 +181,7 @@ namespace Proyecto
                                 thecase += posicion != 0 ? "Estado = " + posicion + ";  }" : "";
                             }
                         }
-                        thecase += thecase!= ""? "else { @ Error = true; @ Salir = true; @ } @ break;" : "";
+                        thecase += thecase!= ""? "else { @ Error = true; @ Salir = true; @ } @ break;" : " @ Error = true; @ Salir = true; @ } @ break;";
                         thecase = thecase != ""? thecase.Replace("@", Environment.NewLine): "";
                         swa.Write(thecase);
                         thecase = ""; contadorestados++;
@@ -191,7 +191,9 @@ namespace Proyecto
                     swa.Write(thecase);
                 }
             }
-           
+            string texto = " x a:= b c = d const a";
+            TEST test = new TEST();
+            test.Verificar(texto);
         }
     }
 }
