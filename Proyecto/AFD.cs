@@ -148,8 +148,8 @@ namespace Proyecto
                 using (StreamWriter sw = File.CreateText(path))
                 {
                     string text = "using System; @  using System.Collections.Generic; @ using System.Linq; @ using System.Text; @ using System.Threading.Tasks; @ namespace Proyecto @ { @  class Prueba @ {";
-                    text += "public void Verificar(string texto) @ { ";
-                    text += " for (int i = 0; i < texto.Length; i++) @ { ";
+                    text += "public void Verificar(string cadena) @ { ";
+                    text += " for (int i = 0; i < cadena.Length; i++) @ { ";
                     text = text.Replace("@", Environment.NewLine);
                     sw.Write(text);
                 }
@@ -161,28 +161,28 @@ namespace Proyecto
                     string thecase = string.Empty;
                     for (int i = 0; i < transiciones.Count; i++)
                     {
-                        thecase += "case " + contadorestados + " : @";
+                        swa.Write("case " + contadorestados + " : ");
                         foreach (var item in transiciones)
                         {
                             if (!thecase.Contains("if"))
                             {
-                                var ifs = validationsets.FirstOrDefault(x => x.Key == item.Key).Value;
-                                thecase += ifs + "{ ";
                                 List<string> temp = item.Value[contadorestados - 1];
                                 int posicion = P.LastOrDefault(x => x.Value.All(temp.Contains) && x.Value.Count == temp.Count).Key;
-                                thecase += "Estado = " + posicion + "; }";
+                                var ifs = validationsets.FirstOrDefault(x => x.Key == item.Key).Value;
+                                thecase += posicion != 0 ? ifs + "{ " : "";
+                                thecase += posicion != 0 ? "Estado = " + posicion + "; }" : "";
                             }
                             else
                             {
                                 var ifs = validationsets.FirstOrDefault(x => x.Key == item.Key).Value;
-                                thecase += "else " + ifs + "{";
                                 List<string> temp = item.Value[contadorestados - 1];
                                 int posicion = P.LastOrDefault(x => x.Value.All(temp.Contains) && x.Value.Count == temp.Count).Key;
-                                thecase += "Estado = " + posicion + ";  }";
+                                thecase += posicion !=0? "else " + ifs + "{" : "";
+                                thecase += posicion != 0 ? "Estado = " + posicion + ";  }" : "";
                             }
                         }
-                        thecase += "else { @ Error = true; @ Salir = true; @ } @ break;";
-                        thecase = thecase.Replace("@", Environment.NewLine);
+                        thecase += thecase!= ""? "else { @ Error = true; @ Salir = true; @ } @ break;" : "";
+                        thecase = thecase != ""? thecase.Replace("@", Environment.NewLine): "";
                         swa.Write(thecase);
                         thecase = ""; contadorestados++;
                     }
