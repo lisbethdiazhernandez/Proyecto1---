@@ -19,6 +19,7 @@ namespace Proyecto
         Dictionary<string, List<List<string>>> transiciones = new Dictionary<string, List<List<string>>>();
         Dictionary<string, string> setsdic = new Dictionary<string, string>();
         Dictionary<string, string> validationsets = new Dictionary<string, string>();
+        Dictionary<string, string> actions = new Dictionary<string, string>();
         Dictionary<string, List<string>> tokendic = new Dictionary<string, List<string>>();
         Dictionary<int, List<string>> P = new Dictionary<int, List<string>>();
         
@@ -35,6 +36,7 @@ namespace Proyecto
             transiciones = validations.transitions;
             setsdic = validations.SetsDic;
             tokendic = validations.TokenDic;
+            actions = validations.ActionsDic;
             foreach(var item in validations.P)
             {
                 P.Add(item.Key, item.Value.Select(x => x.ToString()).ToList());
@@ -164,6 +166,40 @@ namespace Proyecto
                 int contadorestados = 1;
                 using (StreamWriter swa = File.AppendText(path))
                 {
+                    //***************initialize ACTIONS dictionary ***************//
+                    string writeactions = string.Empty;
+                    writeactions += " var actions = new Dictionary<string, string>() @ { ";
+                    foreach(var item in actions)
+                    {
+                        writeactions += writeactions != "" ? "," : "";
+                        writeactions += "{" + item.Key + " , " + item.Value + "}";
+                    }
+                    writeactions += "};";
+                    swa.Write(writeactions);
+
+                    //***************initialize SETS dictionary ***************//
+                    string writesets = string.Empty;
+                    writesets += " var sets = new Dictionary<string, string>() @ { ";
+                    foreach (var item in setsdic)
+                    {
+                        writesets += writesets != "" ? "," : "";
+                        writesets += "{" + item.Key + " , " + item.Value + "}";
+                    }
+                    writesets += "};";
+                    swa.Write(writesets);
+
+                    //***************initialize TOKENS dictionary ***************//
+                    string wrtitetoken = string.Empty;
+                    wrtitetoken += " var token = new Dictionary<string, List<string>>() @ { ";
+                    foreach (var item in tokendic)
+                    {
+                        wrtitetoken += wrtitetoken.Contains(item.Key) ? "," : "";
+                        wrtitetoken += "{" + item.Key + " , new List<string> { \"" + string.Join(",\"",item.Value) + " }";
+                    }
+                    wrtitetoken += "};";
+                    swa.Write(writesets);
+
+
                     swa.WriteLine("int Estado = 0; bool Salir = false; bool Error = false; ");
                     swa.WriteLine("switch (Estado) {");
                     string thecase = string.Empty;
