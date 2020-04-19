@@ -147,9 +147,17 @@ namespace Proyecto
             {
                 using (StreamWriter sw = File.CreateText(path))
                 {
-                    string text = "using System; @  using System.Collections.Generic; @ using System.Linq; @ using System.Text; @ using System.Threading.Tasks; @ namespace Proyecto @ { @  class Prueba @ {";
-                    text += "public void Verificar(string cadena) @ { ";
+                    string text = "using System; @ namespace ConsoleApp1 @ {";
+                    text += " class Program @ { @ static void Main(string[] args) @ {";
+                    text += " Console.WriteLine(\"Please write file path!\"); @ ";
+                    text += " string path = Console.ReadLine(); @ ";
+                    text += " string content = string.Empty; @ ";
+                    text += "if (File.Exists(path)) @ { @ ";
+                    text += " using (StreamReader sr = new StreamReader(path)) @ { @  content = sr.ReadToEnd(); @  } @ } @ else @ { @ ";
+                    text += " Console.WriteLine(\"El archivo no existe, verifique la ruta\"); @ } @ ";
+                    text += " string cadena = string.Empty; @ cadena = content.Replace(\" \", \"\") @ ";
                     text += " for (int i = 0; i < cadena.Length; i++) @ { ";
+                    
                     text = text.Replace("@", Environment.NewLine);
                     sw.Write(text);
                 }
@@ -178,7 +186,7 @@ namespace Proyecto
                                 List<string> temp = item.Value[contadorestados - 1];
                                 int posicion = P.LastOrDefault(x => x.Value.All(temp.Contains) && x.Value.Count == temp.Count).Key;
                                 thecase += posicion !=0? "else " + ifs + "{" : "";
-                                thecase += posicion != 0 ? "Estado = " + posicion + ";  }" : "";
+                                thecase += posicion != 0 ? "Estado = " + posicion + ";  " : "";
                             }
                         }
                         thecase += thecase!= ""? "else { @ Error = true; @ Salir = true; @ } @ break;" : " @ Error = true; @ Salir = true; @ } @ break;";
@@ -186,6 +194,7 @@ namespace Proyecto
                         swa.Write(thecase);
                         thecase = ""; contadorestados++;
                     }
+
                     thecase = "} @ } @ } @ } @ }";
                     thecase = thecase.Replace("@", Environment.NewLine);
                     swa.Write(thecase);
@@ -193,7 +202,7 @@ namespace Proyecto
             }
             string texto = " x a:= b c = d const a";
             TEST test = new TEST();
-            test.Verificar(texto);
+            //test.Verificar(texto);
         }
     }
 }

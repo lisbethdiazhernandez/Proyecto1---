@@ -32,7 +32,10 @@ namespace Proyecto
         public  Dictionary<string, List<List<string>>> transitions = new Dictionary<string, List<List<string>>>();
         public Dictionary<int, List<int>> P = new Dictionary<int, List<int>>();
         static Dictionary<int, List<int>> Follow = new Dictionary<int, List<int>>();
-
+        public string PathofFile;
+        public int indexfile;
+        FileStream stream;
+        StreamReader reader;
         public void ProcesarArchivo(string filepath)
         {
            Read(filepath);
@@ -43,15 +46,17 @@ namespace Proyecto
             string message = string.Empty;
             List<string> Text_archivo = new List<string>();
             string line = string.Empty; bool errorfound = false;
+            PathofFile = filepath;
 
-            using (var stream = new FileStream(filepath, FileMode.Open))
+            using ( stream = new FileStream(filepath, FileMode.Open))
             {
-                using (var reader = new StreamReader(stream))
+                using ( reader = new StreamReader(stream))
                 {
                     while (!reader.EndOfStream && !errorfound)
                     {
                         line = reader.ReadLine();
                         linenum++;
+                       
                         if (error.Count == 0)
                         {
                             if (!set)
@@ -553,9 +558,67 @@ namespace Proyecto
 
             return sets;
         }
-
+        public void GetActions()
+        {
+            stream.Close();
+            string AllActions = string.Empty; bool open = false; bool openkey = false; 
+            string num= string.Empty;
+            using (stream = new FileStream(PathofFile, FileMode.Open))
+            {
+                using (var reader = new StreamReader(stream))
+                {
+                    AllActions = reader.ReadToEnd();
+                }
+            }
+            //ActionsDic
+            AllActions = AllActions.Replace(" ", "").ToLower();
+            AllActions = AllActions.Replace("\r\n", "");
+            AllActions = AllActions.Replace("\t", "");
+            if (AllActions.Contains("reservadas()"))
+            {
+                AllActions = AllActions.Split(new string[] { "reservadas()" }, StringSplitOptions.None)[1];
+            }
+            
+            for (int i = 0; i < AllActions.Length; i++)
+            {
+                if (AllActions.Substring(0, 1) == "{")
+                {
+                    AllActions = AllActions.Substring(1, AllActions.Length - 1);
+                    i = 0;
+                    openkey = true;
+                }
+                else if (AllActions.Substring(0, 1) == "}")
+                {
+                    AllActions = AllActions.Substring(1, AllActions.Length - 1);
+                    i = 0;
+                }
+                else if (AllActions.Substring(0, 1) == "'")
+                {
+                    AllActions = AllActions.Substring(1, AllActions.Length - 1);
+                    i = 0;
+                    openkey = true;
+                }
+                else if (AllActions.Substring(i, 1) == "'" && openkey)
+                {
+                    ActionsDic.Add(num, AllActions.Substring(0, i));
+                    AllActions = AllActions.Substring(i+1, AllActions.Length - (i+1));
+                    openkey = false; i = 0;
+                }
+                else if (AllActions.Substring(i, 1) == "=")
+                {
+                    num = AllActions.Substring(0, i);
+                    AllActions = AllActions.Substring(i+1, AllActions.Length - (i+1));
+                    i = 0;
+                }
+                else if (num == "error")
+                {
+                    ActionsDic.Add(num, AllActions);
+                }
+            }
+        }
         public List<string> ValidarActions()
         {
+            GetActions();
             bool concatenacion = true; int count = 0; bool parentesis = false; bool parentesis2 = false;
             List<string> listadeNodostemp = new List<string>();
             List<List<string>> listaexpresionestemp = new List<List<string>>();
