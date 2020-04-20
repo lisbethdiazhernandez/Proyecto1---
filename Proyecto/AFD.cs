@@ -52,16 +52,7 @@ namespace Proyecto
 
         private void button1_Click(object sender, EventArgs e)
         {
-            using (OpenFileDialog fileDialog = new OpenFileDialog() { Filter = "Text File|*.txt", Multiselect = false })
-            {
-                if (fileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    using (StreamReader str = new StreamReader(fileDialog.FileName))
-                    {
-                        FileName = fileDialog.FileName;
-                    }
-                }
-            }
+           
             foreach (var item in transiciones)
             {
                 var key = setsdic.FirstOrDefault(x => x.Key == item.Key).Value;
@@ -145,11 +136,12 @@ namespace Proyecto
 
             //string path = System.IO.Directory.GetCurrentDirectory();
             string path = "\\Desktop\\CLASE.cs";
+            string text;
             if (!File.Exists(path))
             {
                 using (StreamWriter sw = File.CreateText(path))
                 {
-                    string text = "using System; @ namespace ConsoleApp1 @ {";
+                    text = "using System; @ using System.Collections.Generic; @ using System.IO; @ namespace ConsoleApp1 @ {";
                     text += " class Program @ { @ static void Main(string[] args) @ {";
                     text += " Console.WriteLine(\"Please write file path!\"); @ ";
                     text += " string path = Console.ReadLine(); @ ";
@@ -157,9 +149,8 @@ namespace Proyecto
                     text += "if (File.Exists(path)) @ { @ ";
                     text += " using (StreamReader sr = new StreamReader(path)) @ { @  content = sr.ReadToEnd(); @  } @ } @ else @ { @ ";
                     text += " Console.WriteLine(\"El archivo no existe, verifique la ruta\"); @ } @ ";
-                    text += " string cadena = string.Empty; @ cadena = content.Replace(\" \", \"\") @ ";
-                    text += " for (int i = 0; i < cadena.Length; i++) @ { ";
-                    
+                    text += " string cadena = string.Empty; @  var tokenasignado = new Dictionary<string, string>();@ ";
+                  
                     text = text.Replace("@", Environment.NewLine);
                     sw.Write(text);
                 }
@@ -171,10 +162,11 @@ namespace Proyecto
                     writeactions += " var actions = new Dictionary<string, string>() @ { ";
                     foreach(var item in actions)
                     {
-                        writeactions += writeactions != "" ? "," : "";
-                        writeactions += "{" + item.Key + " , " + item.Value + "}";
+                        writeactions += writeactions.Contains("}") ? "," : "";
+                        writeactions += "{ \"" + item.Key + "\" , \"" + item.Value + "\" }";
                     }
                     writeactions += "};";
+                    writeactions = writeactions.Replace("@", Environment.NewLine);
                     swa.Write(writeactions);
 
                     //***************initialize SETS dictionary ***************//
@@ -182,10 +174,11 @@ namespace Proyecto
                     writesets += " var sets = new Dictionary<string, string>() @ { ";
                     foreach (var item in setsdic)
                     {
-                        writesets += writesets != "" ? "," : "";
-                        writesets += "{" + item.Key + " , " + item.Value + "}";
+                        writesets += writesets.Contains("}") ? "," : "";
+                        writesets += "{ \" " + item.Key + "\" , \"" + item.Value + "\" }";
                     }
                     writesets += "};";
+                    writesets = writesets.Replace("@", Environment.NewLine);
                     swa.Write(writesets);
 
                     //***************initialize TOKENS dictionary ***************//
@@ -193,13 +186,14 @@ namespace Proyecto
                     wrtitetoken += " var token = new Dictionary<string, List<string>>() @ { ";
                     foreach (var item in tokendic)
                     {
-                        wrtitetoken += wrtitetoken.Contains(item.Key) ? "," : "";
-                        wrtitetoken += "{" + item.Key + " , new List<string> { \"" + string.Join(",\"",item.Value) + " }";
+                        wrtitetoken += wrtitetoken.Contains("}") ? "," : "";
+                        wrtitetoken += "{ \" " + item.Key + "\" , new List<string> { \"" + string.Join("\",\"",item.Value) + "\" } }";
                     }
                     wrtitetoken += "};";
-                    swa.Write(writesets);
+                    wrtitetoken = wrtitetoken.Replace("@", Environment.NewLine);
+                    swa.Write(wrtitetoken);
 
-
+                    swa.Write(" for (int i = 0; i < cadena.Length; i++)  { ");
                     swa.WriteLine("int Estado = 0; bool Salir = false; bool Error = false; ");
                     swa.WriteLine("switch (Estado) {");
                     string thecase = string.Empty;
@@ -222,10 +216,10 @@ namespace Proyecto
                                 List<string> temp = item.Value[contadorestados - 1];
                                 int posicion = P.LastOrDefault(x => x.Value.All(temp.Contains) && x.Value.Count == temp.Count).Key;
                                 thecase += posicion !=0? "else " + ifs + "{" : "";
-                                thecase += posicion != 0 ? "Estado = " + posicion + ";  " : "";
+                                thecase += posicion != 0 ? "Estado = " + posicion + "; } " : "";
                             }
                         }
-                        thecase += thecase!= ""? "else { @ Error = true; @ Salir = true; @ } @ break;" : " @ Error = true; @ Salir = true; @ } @ break;";
+                        thecase += thecase!= ""? "else { @ Error = true; @ Salir = true; @ } @ break;" : " @ Error = true; @ Salir = true;  @ break;";
                         thecase = thecase != ""? thecase.Replace("@", Environment.NewLine): "";
                         swa.Write(thecase);
                         thecase = ""; contadorestados++;
