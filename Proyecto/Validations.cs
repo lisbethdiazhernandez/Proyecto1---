@@ -600,7 +600,7 @@ namespace Proyecto
                 }
                 else if (AllActions.Substring(i, 1) == "'" && openkey)
                 {
-                    ActionsDic.Add(num, AllActions.Substring(0, i));
+                    ActionsDic.Add(num, AllActions.Substring(0, i).ToLower());
                     AllActions = AllActions.Substring(i+1, AllActions.Length - (i+1));
                     openkey = false; i = 0;
                 }
@@ -612,7 +612,7 @@ namespace Proyecto
                 }
                 else if (num == "error")
                 {
-                    ActionsDic.Add(num, AllActions);
+                    ActionsDic.Add(num, AllActions.ToLower());
                 }
             }
         }

@@ -149,7 +149,7 @@ namespace Proyecto
                     text += "if (File.Exists(path)) @ { @ ";
                     text += " using (StreamReader sr = new StreamReader(path)) @ { @  content = sr.ReadToEnd(); @  } @ } @ else @ { @ ";
                     text += " Console.WriteLine(\"El archivo no existe, verifique la ruta\"); @ } @ ";
-                    text += " string cadena = string.Empty; @  var tokenasignado = new Dictionary<string, string>();@ ";
+                    text += " string cadena = string.Empty; @  var tokenasignado = new Dictionary<string, string>(); @ ";
                   
                     text = text.Replace("@", Environment.NewLine);
                     sw.Write(text);
