@@ -109,8 +109,12 @@ namespace Proyecto
         }
         public List<string> EsObligatorio(List<string> item)
         {
-            item = item.Select(x => { x = "1," + x ; return x; }).ToList();
-            return item;
+            List<string> temp = new List<string>();
+            foreach(var it in item)
+            {
+                temp.Add("1," + it);
+            }
+            return temp;
         }
 
         public List<string> EncontrarRangos(string Set)
@@ -329,6 +333,10 @@ namespace Proyecto
             //string path = System.IO.Directory.GetCurrentDirectory();
             string path = "\\Desktop\\CLASE.cs";
             string text;
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
             if (!File.Exists(path))
             {
                 #region Escritura de variables y librerias necesarias
@@ -336,18 +344,38 @@ namespace Proyecto
                 {
                     text = "using System; @ using System.Collections.Generic; @ using System.IO; @ using System.Linq; @ namespace ConsoleApp1 @ {";
                     text += " class Program @ { ";
-
+                    text = text.Replace("@", System.Environment.NewLine);
+                    sw.Write(text);
+                    text = "";
+                }
+                using (StreamWriter swa = File.AppendText(path))
+                {
                     //****************Initialize NoTokens Dictionary ****************//
                     string numtoken = string.Empty;
-                    numtoken += " var numToken = new Dictionary<string, List<string>>() @ { ";
+                    numtoken += " Dictionary<string, List<string>> numToken = new Dictionary<string, List<string>>() @ { ";
                     foreach (var item in NoToken)
                     {
                         numtoken += numtoken.Contains("}") ? "," : "";
                         numtoken += "{ \" " + item.Key + "\" , new List<string> { \"" + string.Join("\",\"", item.Value) + "\" } }";
                     }
-                    numtoken += "};";
+                    numtoken += "}; @ ";
                     numtoken = numtoken.Replace("@", Environment.NewLine);
-                    sw.Write(numtoken);
+                    swa.Write(numtoken);
+                    
+
+                    //***************initialize SETS dictionary ***************//
+                    string writesets = string.Empty;
+                    writesets += " Dictionary<string, string> sets = new Dictionary<string, string>() @ { ";
+                    foreach (var item in setsdic)
+                    {
+                        writesets += writesets.Contains("}") ? "," : "";
+                        writesets += "{ \"" + item.Key + "\" , \"" + item.Value + "\" }";
+                    }
+                    writesets += "};";
+                    writesets = writesets.Replace("@", Environment.NewLine);
+                    swa.Write(writesets);
+
+                    swa.Write("public static int token;");
 
                     text += " @ static void Main(string[] args) @ {";
                     text += " Console.WriteLine(\"Please write file path!\"); @ ";
@@ -357,16 +385,15 @@ namespace Proyecto
                     text += " using (StreamReader sr = new StreamReader(path)) @ { @  content = sr.ReadToEnd(); @  } @ } @ else @ { @ ";
                     text += " Console.WriteLine(\"El archivo no existe, verifique la ruta\"); @ } @ ";
                     text += " string cadena = string.Empty; @  var tokenasignado = new Dictionary<string, string>(); @ ";
-                    text+= " string[] cadenas =  content.Split(\" \"); @ var tokenasigna = string.Empty; ";
+                    text+= " string[] cadenas =  content.Split(\" \"); @ int tokenasigna = 0; ";
                     text = text.Replace("@", Environment.NewLine);
-                    sw.Write(text);
-                }
+                    swa.Write(text);
+                
                 int contadorestados = 1;
 #endregion
 
-                #region Escritura de diccionarios
-                using (StreamWriter swa = File.AppendText(path))
-                {
+                #region Escritura de Diccionario Actions
+               
                     //***************initialize ACTIONS dictionary ***************//
                     string writeactions = string.Empty;
                     writeactions += " var actions = new Dictionary<string, string>() @ { ";
@@ -379,31 +406,25 @@ namespace Proyecto
                     writeactions = writeactions.Replace("@", Environment.NewLine);
                     swa.Write(writeactions);
 
-                    //***************initialize SETS dictionary ***************//
-                    string writesets = string.Empty;
-                    writesets += " var sets = new Dictionary<string, string>() @ { ";
-                    foreach (var item in setsdic)
-                    {
-                        writesets += writesets.Contains("}") ? "," : "";
-                        writesets += "{ \"" + item.Key + "\" , \"" + item.Value + "\" }";
-                    }
-                    writesets += "};";
-                    writesets = writesets.Replace("@", Environment.NewLine);
-                    swa.Write(writesets);
 
-                    
-                   
+
+
+
                     #endregion
 
-
+                    #region Escritura de codigo principal 
                     text = "foreach (var item in cadenas) @ {";
                     text += " cadena = item; int Estado = 1; bool Salir = false; bool Error = false; @ ";
                     text += " int EstadoActual = Estado; @ ";
                     text += "  for (int i = 0; i < cadena.Length; i++) @ { ";
-                    text += "if (!Salir) @ { @ switch (Estado) {";
+                    text += "if (!Salir) @ { @ ";
+                    text += "Program here = new Program(); @ tokenasigna = here.ValidarToken(cadena[i].ToString(), cadena.Length, cadena); @ ";
+                    text += " switch (Estado) {";
                     text = text.Replace("@", Environment.NewLine);
                     swa.WriteLine(text);
+                    #endregion
 
+                    #region Escritura de cases 
                     string thecase = string.Empty;
                     for (int i = 0; i <= transiciones.Count; i++)
                     {
@@ -432,13 +453,93 @@ namespace Proyecto
                         swa.Write(thecase);
                         thecase = ""; contadorestados++;
                     }
+                    #endregion 
+
                     thecase = " @ } @ } @  if (i != cadena.Length-1 && Salir) @   { @ Console.WriteLine(\"Cadena invalida\"); @ } @ }";
                     thecase += " if (actions.Values.Contains(cadena.ToLower())) @ { ";
-                    thecase += "@ string reservada = actions.FirstOrDefault(x => x.Value == cadena.ToLower()).Key;";
-                    thecase += "tokenasignado.Add(cadena, reservada.ToString()); @ }";
-                    thecase += "@ else @ { @ tokenasignado.Add(cadena, (Estado - 1).ToString()); @ } @ } @ } @ } @ }";
+                    thecase += "@ string reservada = actions.FirstOrDefault(x => x.Value == cadena.ToLower()).Key; @ }";
+                    thecase += "else @ { tokenasignado.Add(cadena, tokenasigna.ToString()); @ } @ } @ ";
+
                     thecase = thecase.Replace("@", Environment.NewLine);
                     swa.Write(thecase);
+
+                    thecase = " string mostrar = string.Empty; ^ ";
+                    thecase += " foreach (var tokenasigned in tokenasignado) ^ { ^  mostrar += tokenasigned.Key + \" = \" + tokenasigned.Value + \" @ \" ;";
+                    thecase += " ^ } ^  mostrar = mostrar.Replace(\"@\", System.Environment.NewLine); ^ Console.WriteLine(mostrar); ^ Console.ReadKey(); ^ } ";
+                    thecase = thecase.Replace("^", Environment.NewLine);
+                    swa.Write(thecase);
+
+
+                    #region Escritura de funcion ValidarToken 
+                    string funcion = string.Empty;
+                    funcion = " public int ValidarToken(string cadena, int index, string todalacadena) @  { ";
+                    funcion += " foreach (var item in numToken) @ { ";
+                    funcion += " @  if(item.Value.Count >= cadena.Length) @ {";
+                    funcion += " foreach (var valor in item.Value) @ { @ ";
+                    funcion += "bool obligatorio = valor.Split(',')[0] == \"1\" ? true: false; @ ";
+                    funcion += "List<string> valores = EncontrarRangos(valor, sets);";
+                    funcion += "    if (valores.Contains(Convert.ToInt32(cadena.ToCharArray()[0]).ToString()) || valores.Contains(cadena)) @ {";
+                    funcion = funcion.Replace("@", Environment.NewLine);
+                    swa.Write(funcion);
+
+                    funcion = " @ token = Convert.ToInt32(item.Key); @ } @ } @";
+                    funcion += " List<string> todos = item.Value.FindAll(x => x.Split(',')[0] == \"1\").ToList(); @ ";
+                    funcion += " List<bool>cumple = new List<bool>(); int cantidad  = todos.Count; int tokentemp=0; @ ";
+                    funcion += " foreach (var valor in todos) @ { @ ";
+                    funcion += "List<string> valores = EncontrarRangos(valor, sets); @";
+                    funcion += " foreach (var caracter in todalacadena) @ { @ ";
+                    funcion += " if (valores.Contains(Convert.ToInt32(caracter).ToString()) || valores.Contains(cadena)) @";
+                    funcion += "  { if(valores.All(value => todalacadena.Contains(value))) @";
+                    funcion += "  {  @ cumple.Add(true); @ } else { @ cumple.Add(false); @ } @  } @ }";
+                    funcion += " tokentemp = Convert.ToInt32(item.Key); @ }";
+                    funcion += " if (cumple.FindAll(x=> x == true).Count == cantidad) @ ";
+                    funcion += "{ @ token = tokentemp; return token ; @ }  @ } @ } return token; @ }";
+
+                    funcion = funcion.Replace("@", Environment.NewLine);
+                    swa.Write(funcion);
+
+
+                    #endregion
+
+                    funcion = "";
+                    funcion = "public List<string> EncontrarRangos(string Set, Dictionary<string,string> setsdic) " +
+                    "{  List<string> valores = new List<string>();" + "string[] valoresdelset = Set.Split(','); string Obligatorio = valoresdelset[0];"
+                    + " var key = setsdic.FirstOrDefault(x => x.Key == valoresdelset[1]).Value;"
+                    + " string validacion = string.Empty; if (key != \"\" && key != null)"
+                    + " {  if (key.Contains(\"'\")) { key = key.Replace(\"'\", \"\"); }  "
+                    + " string intervalonicial = string.Empty; string intervalofinal = string.Empty; "
+                    + " string temporal = key;"
+                    + " for (int i = 0; i < key.Length; i++) { string inicial; if (temporal.Length >= i + 2)  {"
+                    + " if (temporal.Substring(i, 2) == \"..\")   {"
+                    + " intervalonicial = temporal.Substring(0, 1);";
+                    swa.Write(funcion);
+
+                    funcion = " temporal = temporal.Substring(3, temporal.Length - (i + 2));  }"
+                    + " else if (temporal.Substring(i, 1) == \" + \") { intervalofinal = temporal.Substring(0, 1);"
+                    + " temporal = temporal.Substring(2, temporal.Length - 2);"
+                    + " for (int j = Convert.ToInt32(intervalonicial.ToCharArray()[0]); j <= Convert.ToInt32(intervalofinal.ToCharArray()[0]); j++)"
+                    + " { intervalofinal = \"\"; intervalonicial = \"\"; i = 0; }  }"
+                    + " else if (intervalonicial == \"\" && intervalofinal == \"\" && !temporal.Contains(\"..\"))"
+                    + " { valores.Add(temporal);}  else if (intervalonicial != \"\" && intervalofinal == \"\")"
+                    + " {intervalofinal = temporal.Substring(0, 1); temporal = temporal.Substring(2, temporal.Length - 2);"
+                    + " for (int j = Convert.ToInt32(intervalonicial.ToCharArray()[0]); j <= Convert.ToInt32(intervalofinal.ToCharArray()[0]); j++)"
+                    + " {valores.Add(j.ToString());  } intervalofinal = \"\"; intervalonicial = \"\"; i = 0; } }"
+                     + " else if (!temporal.Contains(\"..\") && !temporal.Contains(\" + \") && intervalonicial != \"\")"
+                     + " {intervalofinal = temporal;";
+                     swa.Write(funcion);
+                    funcion = " for (int j = Convert.ToInt32(intervalonicial.ToCharArray()[0]); j <= Convert.ToInt32(intervalofinal.ToCharArray()[0]); j++)"
+                     + " {valores.Add(j.ToString()); }  i = key.Length;  intervalofinal = \"\"; intervalonicial = \"\";"
+                     + "  }  else   { if (validacion != \"\" && intervalonicial == \"\") {"
+                     + " valores.Add(System.Convert.ToInt32(temporal.ToCharArray()[0]).ToString()); "
+                     + " } else if (temporal.Contains(\" + \") && intervalonicial != \"\")"
+                     + " { intervalofinal = temporal.Substring(0, 1);"
+                     + " temporal = temporal.Length > 2 ? temporal.Substring(2, temporal.Length - 2) : \"\";"
+                     + " for (int j = Convert.ToInt32(intervalonicial.ToCharArray()[0]); j <= Convert.ToInt32(intervalofinal.ToCharArray()[0]); j++)"
+                     + " { valores.Add(j.ToString());    }  intervalofinal = \"\"; intervalonicial = \"\"; i = 0;"
+                     + " } else   {valores.Add(Convert.ToInt32(temporal.ToCharArray()[0]).ToString());"
+                     + " } i = key.Length; }  }  } else   { valores.Add(Set.Split(',')[1]);} return valores; }  } }";
+
+                    swa.Write(funcion);
                 }
             }
             string texto = " x a:= b c = d const a";
