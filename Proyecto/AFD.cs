@@ -385,7 +385,7 @@ namespace Proyecto
                     text += " using (StreamReader sr = new StreamReader(path)) @ { @  content = sr.ReadToEnd(); @  } @ } @ else @ { @ ";
                     text += " Console.WriteLine(\"El archivo no existe, verifique la ruta\"); @ } @ ";
                     text += " string cadena = string.Empty; @  var tokenasignado = new Dictionary<string, string>(); @ ";
-                    text+= " string[] cadenas =  content.Split(\" \"); @ int tokenasigna = 0; ";
+                    text+= " string[] cadenas =  content.Split(' '); @ int tokenasigna = 0; ";
                     text = text.Replace("@", Environment.NewLine);
                     swa.Write(text);
                 
@@ -455,10 +455,10 @@ namespace Proyecto
                     }
                     #endregion 
 
-                    thecase = " @ } @ } @  if (i != cadena.Length-1 && Salir) @   { @ Console.WriteLine(\"Cadena invalida\"); @ } @ }";
+                    thecase = " @ } @ } @  if (i != cadena.Length-1 && Salir) @   { @  if (!tokenasignado.Keys.Contains(cadena)) "  + " {   tokenasignado.Add(cadena, \"Cadena invalida\"); } @ } @ }";
                     thecase += " if (actions.Values.Contains(cadena.ToLower())) @ { ";
                     thecase += "@ string reservada = actions.FirstOrDefault(x => x.Value == cadena.ToLower()).Key; @ }";
-                    thecase += "else @ { tokenasignado.Add(cadena, tokenasigna.ToString()); @ } @ } @ ";
+                    thecase += "else @ {  if(!tokenasignado.Keys.Contains(cadena)) @  { @ tokenasignado.Add(cadena, tokenasigna.ToString()); @ } @ } @ } ";
 
                     thecase = thecase.Replace("@", Environment.NewLine);
                     swa.Write(thecase);
