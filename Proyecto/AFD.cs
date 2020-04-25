@@ -331,7 +331,7 @@ namespace Proyecto
             #endregion
 
             //string path = System.IO.Directory.GetCurrentDirectory();
-            string path = "\\Desktop\\CLASE.cs";
+            string path = "\\Desktop\\GENERACIONCLASE\\CLASE.cs";
             string text;
             if (File.Exists(path))
             {
@@ -455,9 +455,9 @@ namespace Proyecto
                     }
                     #endregion 
 
-                    thecase = " @ } @ } @  if (i != cadena.Length-1 && Salir) @   { @  if (!tokenasignado.Keys.Contains(cadena)) "  + " {   tokenasignado.Add(cadena, \"Cadena invalida\"); } @ } @ }";
+                    thecase = " @ } @ } @  if (i != cadena.Length-1 && Salir) @   { @  if (!tokenasignado.Keys.Contains(cadena)) "  + " {  tokenasignado.Add(cadena,actions.FirstOrDefault(x=> x.Key.ToLower() == \"error\" ).Value); } @ } @ }";
                     thecase += " if (actions.Values.Contains(cadena.ToLower())) @ { ";
-                    thecase += "@ string reservada = actions.FirstOrDefault(x => x.Value == cadena.ToLower()).Key; @ }";
+                    thecase += "@ string reservada = actions.FirstOrDefault(x => x.Value == cadena.ToLower()).Key; @  if (!tokenasignado.Keys.Contains(cadena)) @ { @ tokenasignado.Add(cadena, reservada); @ } @ }";
                     thecase += "else @ {  if(!tokenasignado.Keys.Contains(cadena)) @  { @ tokenasignado.Add(cadena, tokenasigna.ToString()); @ } @ } @ } ";
 
                     thecase = thecase.Replace("@", Environment.NewLine);
@@ -489,10 +489,12 @@ namespace Proyecto
                     funcion += "List<string> valores = EncontrarRangos(valor, sets); @";
                     funcion += " foreach (var caracter in todalacadena) @ { @ ";
                     funcion += " if (valores.Contains(Convert.ToInt32(caracter).ToString()) || valores.Contains(cadena)) @";
-                    funcion += "  { if(valores.All(value => todalacadena.Contains(value))) @";
+                    funcion += "  { " +
+                        " @ int verify = 0; @   foreach (var other in todalacadena) @ {  if (valores.Contains(Convert.ToInt32(other).ToString())) @  { verify++; @ } @ } @ if (verify == todalacadena.Length) { cumple.Add(true); } " +
+                        "if(valores.All(value => todalacadena.Contains(value))) @";
                     funcion += "  {  @ cumple.Add(true); @ } else { @ cumple.Add(false); @ } @  } @ }";
                     funcion += " tokentemp = Convert.ToInt32(item.Key); @ }";
-                    funcion += " if (cumple.FindAll(x=> x == true).Count == cantidad) @ ";
+                    funcion += " if (cumple.FindAll(x=> x == true).Count >= cantidad) @ ";
                     funcion += "{ @ token = tokentemp; return token ; @ }  @ } @ } return token; @ }";
 
                     funcion = funcion.Replace("@", Environment.NewLine);
@@ -545,6 +547,7 @@ namespace Proyecto
             string texto = " x a:= b c = d const a";
             TEST test = new TEST();
             //test.Verificar(texto);
+            MessageBox.Show("Archivo generado correctamete");
         }
     }
 }

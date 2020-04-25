@@ -36,7 +36,7 @@ namespace Proyecto
                 nVertices++;
                 vertice vert = new vertice();
                 vert.value = (bandera == true) ? valor : expresion[0];
-                if (expresion[0] != "?" && expresion[0] != "+" && expresion[0] != "*" && expresion[0] != "|" && expresion[0] != ".")
+                if (expresion[0] != "?" && expresion[0] != "*" && expresion[0] != "|" && expresion[0] != ".")
                 {
                     vert.First = new List<int>();
                     vert.First.Add(NoTerminales);
@@ -203,28 +203,7 @@ namespace Proyecto
                 Graph graph = new Graph(vertices, edges, nVertices);
                 return graph;
             }
-            else if ((expresion.Count == 2 && expresion[1] == "+") || (expresion.Count > 2 && expresion[0] == "(" && expresion[expresion.Count - 2] == ")" && expresion[expresion.Count - 1] == "+"))
-            {
-                // Crear el nodo del *
-                nVertices++;
-                vertice vert = new vertice();
-                vert.value = "+";
-                vert.nullable = false;
-                vertices.Add(nVertices, vert);
-                // Crear el subtree de la expresion
-                Graph subTree = CreateTree(expresion.GetRange(0, expresion.Count - 1), nVertices, nEdges);
-                // Agregar los vertices del subtree
-                subTree.vertices.ToList().ForEach(x => vertices.Add(x.Key, x.Value));
-                // Agregar los edges del subtree
-                subTree.edges.ToList().ForEach(x => edges.Add(x.Key, x.Value));
-                // Agregar el edge que une al nodo y al subtree
-                nEdges = edges.Count + 1;
-                Edge newEdge = new Edge(nVertices, subTree.head);
-                edges.Add(nEdges, newEdge);
-                // Retornar el grafo
-                Graph graph = new Graph(vertices, edges, nVertices);
-                return graph;
-            }
+           
 
 
             Graph graphtemp = new Graph(vertices, edges, 0);
@@ -270,7 +249,7 @@ namespace Proyecto
                     vert.First = AssignFirst(graph, pos).First;
                 }
             }
-            else if (vert.value != "*" || vert.value != "+" || vert.value != "?" || vert.value != "|")
+            else if (vert.value != "*" || vert.value != "?" || vert.value != "|")
             {
                 return vert;
             }
@@ -315,7 +294,7 @@ namespace Proyecto
                     vert.Last = AssignLast(graph, pos).Last;
                 }
             }
-            else if (vert.value != "*" || vert.value != "+" || vert.value != "?" || vert.value != "|")
+            else if (vert.value != "*" || vert.value != "?" || vert.value != "|")
             {
                 return vert;
             }
@@ -327,7 +306,7 @@ namespace Proyecto
         {
             foreach (var item in graph.vertices)
             {
-                if (item.Value.value == "*" || item.Value.value == "+" || item.Value.value == "?")
+                if (item.Value.value == "*" || item.Value.value == "?")
                 {
                     Edge edge = graph.edges.Values.FirstOrDefault(x => x.Start == item.Key);
                     vertice vertice = graph.vertices.FirstOrDefault(x => x.Key == edge.End).Value;
@@ -388,7 +367,7 @@ namespace Proyecto
             {
                 foreach (var item in p[inicio])
                 {
-                    string tempNT = graph.vertices.ToList().FirstOrDefault(x => x.Value.Last.ElementAt(0) == item && x.Value.Last.Count == 1 && x.Value.value != "*" && x.Value.value != "?" && x.Value.value != "." && x.Value.value != "+").Value.value;
+                    string tempNT = graph.vertices.ToList().FirstOrDefault(x => x.Value.Last.ElementAt(0) == item && x.Value.Last.Count == 1 && x.Value.value != "*" && x.Value.value != "?" && x.Value.value != "." ).Value.value;
                     foreach (var noter in transiciones)
                     {
                         if (noter.Key == tempNT)

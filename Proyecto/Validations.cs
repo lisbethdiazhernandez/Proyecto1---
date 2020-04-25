@@ -629,7 +629,7 @@ namespace Proyecto
                 listadeNodostemp.Clear();
                 foreach (var dato in item)
                 {
-                    if (dato != "(" && dato != "*" && dato != "?" && dato != "+" && dato != ")" && dato != "|")
+                    if (dato != "(" && dato != "*" && dato != "?" && dato != ")" && dato != "|")
                     {
                         if(parentesis == true)
                         {
@@ -687,7 +687,7 @@ namespace Proyecto
                     }
                     else
                     {
-                        if(dato == "*" || dato == "+" || dato == "?")
+                        if(dato == "*"  || dato == "?")
                         {
                             listadeNodostemp.Clear();
                             string last = listadeNodos.Last();
